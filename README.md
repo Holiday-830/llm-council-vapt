@@ -10,7 +10,7 @@ Two ways to run it:
 | Mode | Where | What happens |
 |---|---|---|
 | **Manual Chairman** | claude.ai / Claude app chat | One Claude reasons through each lens in isolation, then synthesizes. Zero cost, no keys. |
-| **Parallel (cross-vendor)** | Claude Code on hostM | `council_direct.py` fans the lenses across Claude + ChatGPT + Gemini as real concurrent calls. Costs provider tokens. Catches blind spots a single vendor shares. |
+| **Parallel (cross-vendor)** | Claude Code on your machine | `council_direct.py` fans the lenses across Claude + ChatGPT + Gemini as real concurrent calls. Costs provider tokens. Catches blind spots a single vendor shares. |
 
 This repo is the **source of truth**. Edit here, commit with git. The Claude
 Project knowledge base is a read-only mirror — re-upload changed files when they
@@ -100,7 +100,7 @@ Just type a command — no keys, no scripts:
 Flags: mode `-q|-m|-f` (or `quick|medium|full validation`), input `-u` (upload) /
 `-p` (paste), version `-vN`, severity `-s low|medium|high|critical`.
 
-### On hostM (parallel cross-vendor mode)
+### On your machine (parallel cross-vendor mode)
 
 ```bash
 python3 scripts/council_direct.py \
@@ -176,7 +176,7 @@ In full/medium mode the Attack Chain Analyst can consider sibling findings:
   count as related. If omitted, all readable text siblings are considered. The tag
   is supplied at runtime; no client names or prefixes are baked into the code.
 
-Keep your real finding files **outside** this repo (anywhere on hostM). Point
+Keep your real finding files **outside** this repo (anywhere on your machine). Point
 `--findings-dir` at that location per run.
 
 ---
@@ -185,3 +185,9 @@ Keep your real finding files **outside** this repo (anywhere on hostM). Point
 
 1. **False-positive report template** — a dedicated output template for findings
    the council rejects, separate from the standard verdict format.
+
+---
+
+## Author
+
+Built by [Holiday](https://github.com/Holiday-830)

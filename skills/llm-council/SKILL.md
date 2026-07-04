@@ -1,6 +1,6 @@
 ---
 name: llm-council
-description: Convene a council of independent expert agents to validate a VAPT/pentest finding before it goes in a client report — they assess it blind from different security-review lenses, peer-review each other, then deliver one synthesized verdict on whether it is worth reporting and whether the severity is calibrated. Use whenever the user runs "/llm-council", asks to "validate this finding", "is this worth reporting", "stress-test this finding", "check my severity", "did I overclaim", "review this report before delivery", "convene the council", or wants a finding pressure-tested rather than rubber-stamped. Three depth modes (quick/medium/full) selected by flag. Also supports cross-vendor parallel mode (real Claude/ChatGPT/Gemini via direct provider keys) on hostM via Claude Code on "cross-vendor", "real models", "different providers".
+description: Convene a council of independent expert agents to validate a VAPT/pentest finding before it goes in a client report — they assess it blind from different security-review lenses, peer-review each other, then deliver one synthesized verdict on whether it is worth reporting and whether the severity is calibrated. Use whenever the user runs "/llm-council", asks to "validate this finding", "is this worth reporting", "stress-test this finding", "check my severity", "did I overclaim", "review this report before delivery", "convene the council", or wants a finding pressure-tested rather than rubber-stamped. Three depth modes (quick/medium/full) selected by flag. Also supports cross-vendor parallel mode (real Claude/ChatGPT/Gemini via direct provider keys) on your machine via Claude Code on "cross-vendor", "real models", "different providers".
 ---
 
 # LLM Council — VAPT Finding Validation
@@ -79,7 +79,7 @@ Both the long form and the shorthand mean the same thing. Parse whichever the us
 - Check for an attached/uploaded file (look under `/mnt/user-data/uploads/` or the conversation's uploaded-files pointer).
 - **Edge case — file flag but no file.** If `-u` was passed but no file is attached, **STOP immediately**. Do not run the council on empty input. Respond:
   > No file attached. You used `-u` but I don't see an uploaded finding. Re-run the command with the file attached, or use `-p` to paste the content instead.
-- If a file is found, read it (it is usually a `.md` report in CG-YYYY-MM-DD-NNN format; use the file-reading skill if the type is unclear), then proceed to Stage 1.
+- - If a file is found, read it (it is usually a `.md` finding report; use the file-reading skill if the type is unclear), then proceed to Stage 1.
 
 ### `-p` (paste content)
 
@@ -194,7 +194,7 @@ The council runs in one of two modes depending on where the skill is invoked. De
 
 **Mode detection:**
 ```
-IF shell-capable environment (Claude Code on hostM)
+IF shell-capable environment (Claude Code on your machine)
    AND scripts/council_direct.py present
    AND .env has the required provider keys
       → PARALLEL MODE
@@ -204,7 +204,7 @@ ELSE
 
 **Manual Chairman mode** (default in claude.ai / Claude app chat — no sub-agent spawning here): reason through each active member's lens independently and in isolation — commit to one lens fully before the next, never letting later lenses peek at earlier conclusions — then run Stage 2 and synthesize. This always works and needs no keys. Never tell the user the council "failed" if no keys are present; just run this mode.
 
-**Parallel mode** (Claude Code on hostM, keys in `.env`): invoke `scripts/council_direct.py`, which fans the active members out across the configured providers (Claude, ChatGPT, Gemini) as genuinely independent concurrent API calls, runs the blind Stage-2 ranking, and prints one JSON blob. You then read that JSON and perform Stage 3 (Chairman synthesis) yourself. This is the faithful council — real independence, no shared context between members.
+**Parallel mode** (Claude Code on your machine, keys in `.env`): invoke `scripts/council_direct.py`, which fans the active members out across the configured providers (Claude, ChatGPT, Gemini) as genuinely independent concurrent API calls, runs the blind Stage-2 ranking, and prints one JSON blob. You then read that JSON and perform Stage 3 (Chairman synthesis) yourself. This is the faithful council — real independence, no shared context between members.
 
 > The member lenses, CWE/MITRE protocols, operating rules, and output format are **identical across both modes**. Only the execution differs.
 
@@ -311,7 +311,7 @@ With `-s <level>`, the CVSS Auditor and Red-teamer specifically test that claim 
 
 ## Cross-vendor mode (faithful council via direct provider keys)
 
-This is **parallel mode** (see Execution) and runs only on hostM via Claude Code with `scripts/council_direct.py` and provider keys in `.env`. It sends the finding to three vendors — **Claude, ChatGPT, Gemini** — as genuinely independent calls and **costs real money per run** (provider-billed, varies by token volume). Never silently upgrade the chat default into it. The value is catching **correlated blind spots**: things every Claude lens gets wrong the same way. Stage 3 (your synthesis) is unchanged.
+This is **parallel mode** (see Execution) and runs only on your machine via Claude Code with `scripts/council_direct.py` and provider keys in `.env`. It sends the finding to three vendors — **Claude, ChatGPT, Gemini** — as genuinely independent calls and **costs real money per run** (provider-billed, varies by token volume). Never silently upgrade the chat default into it. The value is catching **correlated blind spots**: things every Claude lens gets wrong the same way. Stage 3 (your synthesis) is unchanged.
 
 `scripts/council_direct.py` loads keys from `.env`, fans the active members across the three providers as concurrent calls for independent Stage-1 assessments, sends each provider all anonymized assessments for the Stage-2 blind ranking, and prints one JSON blob (de-anonymized answers, reviews, aggregate ranking).
 
@@ -337,6 +337,6 @@ Handling the output:
 ## Notes & limits
 
 - **This is peer review, not ground truth.** The council reasons over what the report says. It cannot test the endpoint. Real exploitability comes from the user's curl/nmap/Burp evidence — the council judges whether the report's claims match that evidence and whether the score, CWE, and MITRE mappings are correct.
-- **Default mode shares Claude's blind spots.** Every lens is Claude. It catches weak reasoning, overclaiming, bad CVSS math, and missed chains — but not blind spots all Claude models share. Reach for cross-vendor mode (direct keys on hostM) when the stakes justify the cost.
+- **Default mode shares Claude's blind spots.** Every lens is Claude. It catches weak reasoning, overclaiming, bad CVSS math, and missed chains — but not blind spots all Claude models share. Reach for cross-vendor mode (direct keys on your machine) when the stakes justify the cost.
 - **Honour the standing evidence rules** during synthesis: score only what evidence proves (no guessing architecture or WAF posture); CVSS reflects demonstrated impact, with capability-based discussion kept separate in the narrative; behavior belonging to third-party or vendor-owned public infrastructure (an identity provider's public API, a CDN, an analytics endpoint) is generally not a client finding — the client cannot remediate what they do not own, so confirm the affected asset is within the client's control before reporting it; and any personally identifiable information (e.g. real usernames or emails) must be anonymized in external reports.
 - Member count and lenses are tunable — the defaults are defaults, not laws. For a fast gut-check, quick mode (3) is fine; for a High/Critical going to a client, run full (8).
