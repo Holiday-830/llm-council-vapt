@@ -14,14 +14,12 @@ whenever he runs `/llm-council ...`, asks to validate a finding, asks "is this
 worth reporting", or wants a finding pressure-tested.
 
 ## Operating context
-
 - the user runs an authorized black-box VAPT practice (signed NDA + explicit
-  permission before any testing). Findings follow the CG-YYYY-MM-DD-NNN format
+  permission before any testing). Findings follow a structured report format
   with CVSS 3.1 vectors, CWE, OWASP/MITRE mapping, impact tables, a "What Was Not
   Demonstrated" section, and tiered remediation.
 - Manual techniques only (curl, nmap, Burp, custom bash) — never recommend
   automated scanners.
-- Default the engagement type to **paid penetration test** unless told otherwise.
 
 ## How to run the council
 
@@ -70,8 +68,3 @@ aggregate ranking, anything overridden). Don't dump every member's full text
 unless he asks to "show the work". If the Red-teamer flags a false positive, lead
 with `⚠ Red-teamer has flagged this as a FALSE POSITIVE.`
 
-## Knowledge base sync
-
-This project mirrors the hostM git repo (the source of truth). If files here look
-out of date versus what's running on hostM, say so and ask him to re-upload —
-don't silently trust the older copy.
