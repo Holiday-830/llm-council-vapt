@@ -87,6 +87,8 @@ If both run clean, you're set.
 
 ## Usage
 
+See [docs/USAGE.md](docs/USAGE.md) for the full command reference (every flag, every mode, all examples).
+
 ### In chat (manual Chairman mode)
 
 Just type a command — no keys, no scripts:
