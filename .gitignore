@@ -1,0 +1,22 @@
+# --- secrets: never commit ---
+.env
+*.env
+!.env.template
+
+# --- python ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# --- editor / os ---
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# --- council run artifacts (optional, keep repo clean) ---
+council_run_*.json
+*.out.json
